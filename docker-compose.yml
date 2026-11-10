@@ -38,5 +38,45 @@ services:
       --partitions 3 --replication-factor 1
     restart: "no"
 
+  namenode:
+    image: apache/hadoop:3.3.6
+    container_name: namenode
+    hostname: namenode
+    user: root
+    command: ["/bin/bash", "-c", "if [ ! -d /hadoop/dfs/name/current ]; then hdfs namenode -format -force; fi; hdfs namenode"]
+    ports:
+      - "9870:9870"   # interface web
+      - "9000:9000"   # RPC
+    environment:
+      HADOOP_HEAPSIZE_MAX: 512m
+      HDFS_NAMENODE_USER: root
+    volumes:
+      - namenode-data:/hadoop/dfs/name
+      - ./hadoop-conf/core-site.xml:/opt/hadoop/etc/hadoop/core-site.xml:ro
+      - ./hadoop-conf/hdfs-site.xml:/opt/hadoop/etc/hadoop/hdfs-site.xml:ro
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:9870/ > /dev/null || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+
+  datanode:
+    image: apache/hadoop:3.3.6
+    container_name: datanode
+    hostname: datanode
+    user: root
+    command: ["hdfs", "datanode"]
+    depends_on:
+      namenode:
+        condition: service_healthy
+    environment:
+      HADOOP_HEAPSIZE_MAX: 512m
+      HDFS_DATANODE_USER: root
+    volumes:
+      - datanode-data:/hadoop/dfs/data
+      - ./hadoop-conf/core-site.xml:/opt/hadoop/etc/hadoop/core-site.xml:ro
+      - ./hadoop-conf/hdfs-site.xml:/opt/hadoop/etc/hadoop/hdfs-site.xml:ro
 volumes:
   kafka-data:
+  namenode-data:
+  datanode-data:
