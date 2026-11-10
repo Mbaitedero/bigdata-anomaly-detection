@@ -1,0 +1,28 @@
+seed: 42
+
+kafka:
+  bootstrap_servers: localhost:9092
+  topic: transactions
+
+generation:
+  rate_tx_per_sec: 300
+  anomaly_ratio: 0.05
+  anomaly_weights:        # répartition des 5 % entre types
+    extreme_amount: 0.25
+    extreme_quantity: 0.20
+    customer_burst: 0.20
+    hour_spike: 0.15
+    unusual_city: 0.20
+
+reference:
+  n_customers: 3000
+  n_products: 200
+  segments:
+    standard: 0.65
+    premium: 0.25
+    vip: 0.10
+  cities: [Casablanca, Rabat, Fès, Marrakech, Tanger, Agadir, Meknès, Oujda, Kenitra, Tétouan]
+
+paths:
+  reference_dir: data/reference
+  ground_truth_dir: data/ground_truth
