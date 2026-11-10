@@ -1,0 +1,24 @@
+# Vérité terrain : ne jamais versionner, ne jamais lire côté détection
+data/ground_truth/*
+!data/ground_truth/.gitkeep
+
+# Données lourdes / générées
+data/*.parquet
+data/*.json
+data/*.jsonl
+hdfs-data/
+kafka-data/
+
+# Secrets et environnement
+.env
+.venv/
+__pycache__/
+.ipynb_checkpoints/
+
+# Java / Maven
+processing/mapreduce/target/
+
+# OS / IDE
+.DS_Store
+.idea/
+.vscode/
